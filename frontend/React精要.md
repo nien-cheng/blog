@@ -345,3 +345,8 @@ React生态系统庞大，包含了大量的工具和库，如React Router、Mob
 2. MobX：用于管理应用程序的全局状态。
 3. Styled Components：用于编写组件级别的样式。
 4. Axios：用于发送HTTP请求。
+5. Ant Design：用于快速构建企业级应用。
+6. Formik：用于表单管理。
+7. Framer Motion：用于动画管理。
+8. Next.js：用于服务器端渲染。
+9. Tailwind CSS：用于快速构建UI。
