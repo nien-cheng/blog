@@ -5,16 +5,22 @@
     - [Hooks](#hooks)
   - [声明式编程](#声明式编程)
   - [单向数据流](#单向数据流)
-  - [核心概念](#核心概念)
+  - [虚拟DOM](#虚拟dom)
+  - [生命周期](#生命周期)
 
 
 # React精要
 React作为现代前端开发的核心框架，其精要可归纳为以下几个核心理念与技术特性：
 
 1. 组件化架构
-1. 声明式编程
-1. 单向数据流
-1. 虚拟DOM
+2. 声明式编程
+3. 单向数据流
+4. 虚拟DOM
+6. 生命周期
+9. JSX语法
+5. 状态管理
+7. Context API
+8. 生态系统
 
 ## 组件化架构
 React将UI拆解为独立、可复用的组件，每个组件专注于单一功能，通过组合而非继承构建复杂界面。
@@ -120,32 +126,84 @@ function ChildComponent({ value, onIncrement }) {
 }
 ```
 
-## 核心概念
-- **组件（函数组件/类组件）**  
-  构建UI的基本单元，函数组件+Hooks成为主流范式，类组件用于兼容老代码
+## 虚拟DOM
+React通过虚拟DOM（Virtual DOM）实现高效的UI渲染。
+虚拟DOM是一个轻量级的JavaScript对象，描述了真实DOM的结构和属性。
+React通过Diff算法比较新旧虚拟DOM，找出差异并批量更新真实DOM，避免了频繁操作DOM的性能损耗。
 
-- **状态（State）与管理**  
-  组件内部使用useState，复杂场景配合Context API或Redux等状态管理库
+```jsx
+// 虚拟DOM
+const virtualDOM = {
+  type: 'div',
+  props: {
+    className: 'container',
+    children: [
+      { type: 'h1', props: { children: 'Hello, World!' } },
+      { type: 'p', props: { children: 'This is a paragraph.' } }  
+    ]  
+  }  
+};
 
-- **生命周期（类组件）与 Hooks（函数组件）**  
-  类组件有componentDidMount等生命周期方法，函数组件通过useEffect等Hooks实现类似功能
+// 渲染到真实DOM
+ReactDOM.render(virtualDOM, document.getElementById('root'));
+```
 
-- **虚拟DOM与Diff算法**  
-  通过内存DOM树比对，最小化真实DOM操作，提升渲染性能
+## 生命周期
+React组件的生命周期包括挂载、更新、卸载等阶段，通过生命周期方法处理组件的初始化、数据更新、销毁等逻辑。
+生命周期方法是类组件的重要组成部分，用于管理组件的状态和行为。
+我们先看下类组件的生命周期方法，比较好理解生命周期。
+```jsx
+class Counter extends React.Component {
+  constructor() {
+    // 初始化状态
+    // 不推荐在构造函数中执行副作用操作（如网络请求）
+    // 仅执行一次
+  } 
+  componentDidMount() {
+    // 组件挂载后执行的逻辑 
+    // 初始化DOM操作、网络请求等
+    // 挂载后立即执行（首次渲染）
+    // 挂载后执行一次
+  }
+  componentDidUpdate() {
+    // 组件更新后执行的逻辑 
+    // 更新阶段（props/state变化
+    // 响应变化，执行副作用操作
+    // 每次更新后执行
+  }
+  componentWillUnmount() {
+    // 组件卸载前执行的逻辑
+    // 清理定时器、取消订阅等
+    // 卸载前执行一次
+  }
+  render() {
+    // 渲染组件
+    // render方法在每次渲染时执行
+    return <button onClick={this.handleClick}>
+        {this.state.count}
+    </button>; 
+  }
+}
+```
+以下是函数式组件的生命周期方法，如果没有类组件的基础，对应起来会有点困难。
+毕竟最简单的组件，可以没有useEffect和useState，相当于只有一个render方法。
+```jsx
+function ExampleComponent() {
+  const [count, setCount] = useState(0); // 状态初始化
+  useEffect(() => {
+    // 组件挂载后执行的逻辑
+    // 初始化DOM操作、网络请求等
+    // 挂载后立即执行（首次渲染）
+    // 挂载后执行一次
+    // constructor + componentDidMount函数
+    return () => {
+      // 组件卸载前执行的逻辑
+      // 清理定时器、取消订阅等
+      // 卸载前执行一次
+      // componentWillUnmount函数
+    };
+  }, []);
 
-- **单向数据流**  
-  数据通过Props自上而下传递，子组件不能直接修改父级数据
-
-- **组合模式（组件嵌套）**  
-  通过props.children或自定义插槽实现组件复合，优于继承的代码复用方式
-
-- **Context API**  
-  跨层级组件数据传递方案，替代逐层传递props的繁琐操作
-
-- **JSX语法**  
-  JavaScript语法扩展，允许在JS中编写HTML-like结构，最终通过Babel编译为JS代码
-
-- **函数式编程思想**  
-
-- **生态系统（React Router/Redux等）**  
-  路由管理、状态管理、SSR等能力通过扩展库实现，形成完整技术栈
+  return <div>...</div>; // render函数，渲染组件
+}
+```
