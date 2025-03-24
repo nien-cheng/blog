@@ -9,8 +9,8 @@
   - [生命周期](#生命周期)
   - [JSX语法](#jsx语法)
   - [状态管理](#状态管理)
-  - [路由管理](#路由管理)
   - [Context API](#context-api)
+  - [路由管理](#路由管理)
   - [生态系统](#生态系统)
 
 
@@ -24,8 +24,8 @@ React作为现代前端开发的核心框架，其精要可归纳为以下几个
 6. 生命周期
 9. JSX语法
 5. 状态管理
-6. 路由管理
 7. Context API
+6. 路由管理
 8. 生态系统
 
 ## 组件化架构
@@ -279,6 +279,31 @@ const Counter = observer(() => {
   );
 });
 ```
+## Context API
+Context API是React内置的状态共享机制，用于在组件树中跨层级传递数据，避免通过 props 逐层传递。
+提供的一种全局状态管理机制，用于在组件树中共享数据。
+中小型应用或快速原型开发，避免引入额外依赖。
+Provider组件包裹范围内的所有子组件都可访问Context值。
+```jsx
+// 1. 创建Context对象
+const ThemeContext = React.createContext('light');
+
+// 2. Provider提供数据
+function App() {
+  return (
+    <ThemeContext.Provider value="dark">
+      <Toolbar />
+    </ThemeContext.Provider>
+  );
+}
+
+// 3. 函数组件现代写法（配合useContext Hook）
+function Toolbar() {
+  const theme = useContext(ThemeContext);
+  return <div>Current theme: {theme}</div>;
+}
+```
+
 ## 路由管理
 React Router是React生态系统中的路由管理库，用于处理单页面应用（SPA）的路由管理。
 提供了声明式的路由配置，支持动态路由、嵌套路由等功能。
@@ -312,29 +337,11 @@ function UserProfile() {
 }
 ```
 
-## Context API
-Context API是React内置的状态共享机制，用于在组件树中跨层级传递数据，避免通过 props 逐层传递。
-提供的一种全局状态管理机制，用于在组件树中共享数据。
-中小型应用或快速原型开发，避免引入额外依赖。
-Provider组件包裹范围内的所有子组件都可访问Context值。
-```jsx
-// 1. 创建Context对象
-const ThemeContext = React.createContext('light');
-
-// 2. Provider提供数据
-function App() {
-  return (
-    <ThemeContext.Provider value="dark">
-      <Toolbar />
-    </ThemeContext.Provider>
-  );
-}
-
-// 3. 函数组件现代写法（配合useContext Hook）
-function Toolbar() {
-  const theme = useContext(ThemeContext);
-  return <div>Current theme: {theme}</div>;
-}
-```
-
 ## 生态系统
+React生态系统庞大，包含了大量的工具和库，如React Router、MobX、Styled Components等。
+这些工具和库提供了丰富的功能和特性，用于简化开发、提高开发效率。
+在这里，我梳理下常用的工具和库。
+1. React Router：用于处理单页面应用（SPA）的路由管理。
+2. MobX：用于管理应用程序的全局状态。
+3. Styled Components：用于编写组件级别的样式。
+4. Axios：用于发送HTTP请求。
