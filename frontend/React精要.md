@@ -67,13 +67,58 @@ function Counter() {
 ```
 
 ## 声明式编程
-开发者只需描述UI应呈现的状态（UI = f(state, props)），而非手动操作DOM。React通过虚拟DOM自动计算差异并批量更新真实DOM，减少性能损耗。
-    - 声明式编程是一种编程范式，其核心思想是描述问题的目标或所需结果，而非具体的实现步骤。
-    - 相对应的是命令式编程，需逐条指令指导计算机操作（如循环、变量赋值），关注执行流程。
-
+开发者只需描述UI应呈现的状态（UI = f(state, props)），而非手动操作DOM。
+React通过虚拟DOM自动计算差异并批量更新真实DOM，减少性能损耗。
+声明式编程是一种编程范式，其核心思想是描述问题的目标或所需结果，而非具体的实现步骤。
+```jsx
+// 声明式：状态驱动视图
+function Counter() {
+  const [count, setCount] = useState(0);
+  return (
+    <button onClick={() => setCount(c => c + 1)}>
+      Clicked {count} times
+    </button>
+  );
+}
+```
+相对应的是命令式编程，需逐条指令指导计算机操作（如循环、变量赋值），关注执行流程。
+```javascript
+// 命令式：手动操作DOM
+const button = document.getElementById('myButton');
+let count = 0;
+button.addEventListener('click', () => {
+  count++;
+  button.textContent = `Clicked ${count} times`; // 直接修改DOM
+});
+```
 ## 单向数据流
-数据从父组件流向子组件（通过props），子组件通过回调函数向上传递事件，确保数据流动可预测，避免状态混乱。传统双向绑定（如Angular的ngModel）虽然简化了表单等场景的开发，但会导致数据流隐式且难以追踪，增加调试难度。
+数据从父组件流向子组件（通过props），子组件通过回调函数向上传递事件，确保数据流动可预测，避免状态混乱。
+传统双向绑定（如Angular的ngModel）虽然简化了表单等场景的开发，但会导致数据流隐式且难以追踪，增加调试难度。
 
+```jsx
+// 父组件管理状态
+function ParentComponent() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <div>
+      <ChildComponent 
+        value={count} 
+        onIncrement={() => setCount(c => c + 1)}
+      />
+    </div>
+  );
+}
+
+// 子组件只接收props和触发事件
+function ChildComponent({ value, onIncrement }) {
+  return (
+    <button onClick={onIncrement}>
+      Current value: {value}
+    </button>
+  );
+}
+```
 
 ## 核心概念
 - **组件（函数组件/类组件）**  
