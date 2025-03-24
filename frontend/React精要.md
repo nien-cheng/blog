@@ -17,21 +17,54 @@ React作为现代前端开发的核心框架，其精要可归纳为以下几个
 1. 虚拟DOM
 
 ## 组件化架构
-React将UI拆解为独立、可复用的组件，每个组件专注于单一功能，通过组合而非继承构建复杂界面。组件间通过props传递数据，形成树状结构，提升代码模块化与可维护性。
+React将UI拆解为独立、可复用的组件，每个组件专注于单一功能，通过组合而非继承构建复杂界面。
+组件间通过props传递数据，形成树状结构，提升代码模块化与可维护性。
 ### 类组件
-通过state管理内部状态，结合生命周期方法处理复杂逻辑（如数据请求）。我自己不太常用了，但是在较早的React开发中比较常见的。大约是2019年开始写React代码，那时候用的比较多。
- ```jsx
- class Counter extends React.Component {
-     constructor(props) { super(props); this.state = { count: 0 }; }
-     handleClick = () => this.setState({ count: this.state.count + 1 });
-     render() { return <button onClick={this handleClick}>{this.state.count}</button>; }
- }
- ```
+通过state管理内部状态，结合生命周期方法处理复杂逻辑（如数据请求）。
+我自己不太常用了，但是在较早的React开发中比较常见的。
+大约是2019年开始写React代码，那时候用的比较多。
+```jsx
+class Counter extends React.Component<{}, { count: number }> { 
+  constructor(props: {}) { 
+      super(props); 
+      this.state = { count: 0 }; 
+  }
+  
+  handleClick = () => this.setState({ 
+      count: this.state.count + 1 
+  });
+   
+  render() { 
+      return <button onClick={this.handleClick}> 
+          {this.state.count}
+      </button>; 
+  }
+}
+```
 ### 函数式组件
-以纯函数形式定义UI，接收props并返回DOM元素，天然支持声明式编程。据2022-2024年的调研，80%以上的新项目采用函数式组件，仅老项目或特定场景保留类组件。
+以纯函数形式定义UI，接收props并返回DOM元素，天然支持声明式编程。
+据2022-2024年的调研，80%以上的新项目采用函数式组件，仅老项目或特定场景保留类组件。
+```jsx
+function Counter({ count, onClick }: { count: number, onClick: () => void }) {
+  return <button onClick={onClick}>
+      {count}
+  </button>;
+}
+```
 
 ### Hooks
-是React 16.8引入的函数式工具，用于在函数式组件中管理状态、副作用等能力。本质是“钩子函数”（如useState、useEffect），将类组件的生命周期和状态逻辑注入函数式组件。
+是React 16.8引入的函数式工具，用于在函数式组件中管理状态、副作用等能力。
+本质是“钩子函数”（如useState、useEffect），将类组件的生命周期和状态逻辑注入函数式组件。
+```jsx
+function Counter() {
+  const [count, setCount] = useState(0);
+  const handleClick = () => setCount(count + 1);
+
+  return <button onClick={handleClick}>
+      {count}
+  </button>;
+}
+```
 
 ## 声明式编程
 开发者只需描述UI应呈现的状态（UI = f(state, props)），而非手动操作DOM。React通过虚拟DOM自动计算差异并批量更新真实DOM，减少性能损耗。
