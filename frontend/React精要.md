@@ -8,6 +8,7 @@
   - [虚拟DOM](#虚拟dom)
   - [生命周期](#生命周期)
   - [JSX语法](#jsx语法)
+  - [状态管理](#状态管理)
 
 
 # React精要
@@ -220,4 +221,57 @@ JSX语法在编译时会被转换为React.createElement函数调用，生成虚�
 ```jsx
 const element = React.createElement('h1', null, 'Hello, World!');
 ```
-如果没有jsx语法，JavaScript代码会变得非常繁琐。
+
+## 状态管理
+React内置了状态管理的能力，如useState、useReducer等。
+```jsx
+// 简单状态管理：useState
+const [count, setCount] = useState(0);
+
+// 复杂状态管理：useReducer
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment': return { count: state.count + 1 };
+    default: return state;
+  }
+}
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+  return <button onClick={() => dispatch({ type: 'increment' })}>
+    {state.count}
+  </button>;
+}
+```
+社区提供了多种状态管理库，如Redux、MobX等，用于管理应用程序的全局状态。
+我个人比较喜欢MobX，因为它的API比较简单，易于使用。
+```jsx
+// MobX状态管理（v6+现代写法）
+import { makeAutoObservable } from "mobx";
+import { observer } from "mobx-react-lite";
+
+// 1. 创建可观察Store
+class CounterStore {
+  count = 0;
+
+  constructor() {
+    makeAutoObservable(this); // 自动转换字段为observable
+  }
+
+  // 2. 创建action方法
+  increment = () => {
+    this.count += 1;
+  };
+}
+
+// 3. 创建store实例
+const counterStore = new CounterStore();
+
+// 4. 使用observer包裹组件
+const Counter = observer(() => {
+  return (
+    <button onClick={counterStore.increment}>
+      {counterStore.count}
+    </button>
+  );
+});
+```
