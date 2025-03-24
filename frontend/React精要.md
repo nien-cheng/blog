@@ -7,6 +7,7 @@
   - [单向数据流](#单向数据流)
   - [虚拟DOM](#虚拟dom)
   - [生命周期](#生命周期)
+  - [JSX语法](#jsx语法)
 
 
 # React精要
@@ -207,3 +208,16 @@ function ExampleComponent() {
   return <div>...</div>; // render函数，渲染组件
 }
 ```
+
+## JSX语法
+JSX是React的一种扩展语法，用于描述UI组件的结构和属性。
+JSX语法允许在JavaScript中直接编写HTML-like代码，简化了组件的定义和渲染。
+```jsx
+const element = <h1>Hello, World!</h1>;
+```
+JSX语法在编译时会被转换为React.createElement函数调用，生成虚拟DOM。
+以上代码等价于以下代码，不推荐直接使用createElement，因为可读性不高，容易出错。
+```jsx
+const element = React.createElement('h1', null, 'Hello, World!');
+```
+如果没有jsx语法，JavaScript代码会变得非常繁琐。
