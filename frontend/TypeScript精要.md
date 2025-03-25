@@ -4,8 +4,24 @@
     - [var声明](#var声明)
     - [let声明](#let声明)
     - [const声明](#const声明)
-    - [最佳时间](#最佳时间)
+    - [最佳实践](#最佳实践)
   - [类与面向对象](#类与面向对象)
+    - [属性与方法](#属性与方法)
+    - [构造函数](#构造函数)
+    - [访问控制修饰符](#访问控制修饰符)
+    - [静态方法](#静态方法)
+    - [继承与多态](#继承与多态)
+    - [抽象类](#抽象类)
+    - [接口实现](#接口实现)
+    - [interface与type的区别](#interface与type的区别)
+      - [interface](#interface)
+      - [type](#type)
+      - [继承与扩展](#继承与扩展)
+  - [泛型](#泛型)
+    - [泛型函数](#泛型函数)
+    - [泛型类](#泛型类)
+    - [泛型接口](#泛型接口)
+    - [泛型约束](#泛型约束)
 
 # TypeScript精要
 JavaScript的超集，为大型应用开发设计的强类型语言。
@@ -103,10 +119,188 @@ arr.push(3); // 允许修改数组内容
 arr = ;   // 报错：不能重新赋值
 ```
 
-### 最佳时间
+### 最佳实践
 - 优先使用 const（除非需要修改值），其次使用 let，避免使用 var（因其作用域和变量提升易引发问题）。
 - 结合 TypeScript 的类型系统，显式声明变量类型以提升代码安全性。
 
 ## 类与面向对象  
-- 支持类继承（`extends`）、实现接口（`implements`）、访问修饰符（`public`/`private`/`protected`）。
-- 静态方法与属性（`static`），以及 `get`/`set` 访问器。
+类（Class）是面向对象编程的核心概念，其定义涉及多个关键知识点。以下是主要知识点的综合总结，结合了类的结构、修饰符、继承、抽象类等核心特性。
+
+### 属性与方法
+类通过 class 关键字定义，包含属性、构造函数和方法。
+```typescript
+class Person {
+  name: string; // 属性
+  constructor(name: string) { this.name = name; } // 构造函数
+  greet() { console.log(`Hello,  $ {this.name}!`); } // 方法
+}
+```
+
+### 构造函数
+构造函数用于初始化实例，若未显式定义，TypeScript 会生成默认空构造函数。
+```typescript
+class Person {
+  name: string;
+  constructor(name: string) { this.name = name; } // 构造函数
+}
+```
+
+### 访问控制修饰符
+- public：默认，类内外均可访问，公共 API 或可修改属性。
+- private：仅类内部访问，隐藏内部实现细节。
+- protected：类和子类可访问，共享给子类的私有逻辑。
+```typescript
+class BankAccount {
+  private balance: number; // 仅类内访问
+  protected accountNumber: string; // 类和子类可访问
+  public deposit(amount: number) { /* ... */ } // 公共方法
+}
+```
+
+### 静态方法
+静态成员属于类本身，而非实例，通过类名直接访问。
+```typescript
+class Database {
+  static instance: Database | null = null; // 静态属性
+  static getInstance() { // 静态方法
+    if (!this.instance) this.instance = new Database();
+    return this.instance;
+  }
+}
+```
+
+### 继承与多态
+使用 extends 关键字实现单继承，子类可继承父类的非私有成员。
+- 构造函数调用：子类构造函数必须通过 super() 调用父类构造函数。
+- 方法重写：子类可覆盖父类方法。
+
+```typescript
+class Animal {
+  constructor public name: string) { }
+  abstract say(): void;
+}
+
+class Dog extends Animal {
+  say() { console.log ` $ {this.name} 汪汪`; }
+}
+```
+
+### 抽象类
+用 abstract 关键字声明，不能被实例化，仅作为基类。
+强制子类实现抽象方法，定义通用接口规范。
+```typescript
+abstract class Shape {
+  abstract area(): number;
+}
+
+class Circle extends Shape {
+  radius: number;
+  area() { return Math.PI * this radius ** 2; }
+}
+```
+
+### 接口实现
+使用 implements 关键字让类实现接口，确保类符合接口的结构要求。
+
+```typescript
+interface IRenderable {
+  render(): void;
+}
+
+class Component implements IRenderable {
+  render() { /* ... */ }
+}
+```
+
+### interface与type的区别
+
+#### interface
+- 面向对象设计：主要用于描述对象的结构（如属性、方法），强调类型契约和可扩展性。
+- 典型场景：定义类、函数、事件的形状，或通过 implements 实现类的接口约束。
+
+```typescript
+interface Person {
+  name: string;
+  greet(): void;
+}
+class User implements Person { /* ... */ }
+```
+此外，interface支持同名接口的自动合并，适用于模块化扩展类型定义。type禁止同名重复声明，否则报错。
+```typescript
+interface User { name: string; }
+interface User { age: number; } // 合并为 { name: string; age: number; }
+```
+
+#### type
+- 类型别名：为已有类型（基本类型、联合类型、元组等）创建别名，支持更灵活的类型操作。
+- 典型场景：定义联合类型、交叉类型、工具类型（如 Partial<T>），或简化复杂类型表达式。
+
+```typescript
+type StringOrNumber = string | number;
+type Admin = { role: "admin" };
+```
+
+#### 继承与扩展
+- interface 使用 extends 继承其他接口或类型别名，支持逐步扩展。
+- type 使用 & 实现交叉类型组合，但无法直接继承。
+
+```typescript
+// interface
+interface Animal { name: string; }
+interface Dog extends Animal { breed: string; }
+
+// type
+type Animal = { name: string; };
+type Dog = Animal & { breed: string; };
+```
+
+## 泛型
+泛型是一种在定义函数、类或接口时不指定具体类型，而是在使用时再指定类型的技术。
+
+### 泛型函数
+泛型函数通过类型参数（如 T）定义，允许函数在调用时动态指定具体类型，避免使用 any 或联合类型导致的类型信息丢失。
+```typescript
+function identity<T>(arg: T): T {
+  return arg;
+}
+// 调用方式：
+// 显式指定类型：identity<string>("hello")
+// 类型推断：identity("hello")（编译器自动推断 T 为 string）
+```
+
+### 泛型类
+泛型类允许类的属性和方法使用类型参数，适用于需要类型安全的集合或容器类。
+```typescript
+class Stack<T> {
+  private items: T[] = [];
+  push(item: T) { this.items.push(item); }
+  pop(): T | undefined { return this.items.pop(); }
+}
+```
+
+### 泛型接口
+泛型接口通过类型参数定义可复用的类型结构，常用于约束函数或类的行为。
+```typescript
+interface IArr<T> {
+  (value: T, count: number): T[];
+}
+const createArr: IArr<string> = (value, count) => new Array(count).fill(value);
+
+createArr("hello", 3);   // ✅ 正确（返回 ["hello", "hello", "hello"]）
+createArr(123, 3);       // ❌ 错误（类型不匹配）
+```
+
+### 泛型约束
+通过 extends 关键字限制泛型类型必须满足特定条件（如包含某些属性或继承某个类）
+- 应用场景：
+  - 确保泛型类型具有特定属性（如 string 或 Array<T>）。
+  - 结合联合类型或工具类型（如 Partial<T>）增强灵活性。
+```typescript
+interface HasLength {
+  length: number;
+}
+function loggingIdentity<T extends HasLength>(arg: T): T {
+  console.log(arg.length); // 安全访问 .length 属性
+  return arg;
+}
+```
