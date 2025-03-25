@@ -4,6 +4,7 @@
     - [var声明](#var声明)
     - [let声明](#let声明)
     - [const声明](#const声明)
+    - [最佳时间](#最佳时间)
   - [类与面向对象](#类与面向对象)
 
 # TypeScript精要
@@ -101,6 +102,10 @@ const arr: number[] = ;
 arr.push(3); // 允许修改数组内容
 arr = ;   // 报错：不能重新赋值
 ```
+
+### 最佳时间
+- 优先使用 const（除非需要修改值），其次使用 let，避免使用 var（因其作用域和变量提升易引发问题）。
+- 结合 TypeScript 的类型系统，显式声明变量类型以提升代码安全性。
 
 ## 类与面向对象  
 - 支持类继承（`extends`）、实现接口（`implements`）、访问修饰符（`public`/`private`/`protected`）。
