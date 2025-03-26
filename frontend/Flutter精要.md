@@ -1,6 +1,18 @@
 - [Flutter精要](#flutter精要)
   - [Dart语言](#dart语言)
   - [组件化](#组件化)
+    - [Text](#text)
+    - [Image](#image)
+    - [Button](#button)
+    - [Container](#container)
+    - [Row \& Column](#row--column)
+    - [Stack](#stack)
+    - [TextField](#textfield)
+    - [Checkbox \& Radio](#checkbox--radio)
+    - [Switch \& Slider](#switch--slider)
+    - [Scaffold](#scaffold)
+    - [Card](#card)
+    - [TabBar \& TabBarView](#tabbar--tabbarview)
   - [状态管理](#状态管理)
     - [StatefulWidget](#statefulwidget)
     - [InheritedWidget](#inheritedwidget)
@@ -8,6 +20,15 @@
     - [BLoC（Business Logic Component）](#blocbusiness-logic-component)
     - [Riverpod](#riverpod)
     - [最佳实践](#最佳实践)
+  - [动画](#动画)
+    - [AnimationController](#animationcontroller)
+    - [CurvedAnimation](#curvedanimation)
+    - [Tween](#tween)
+    - [隐式动画](#隐式动画)
+    - [显式动画](#显式动画)
+      - [AnimatedBuilder](#animatedbuilder)
+      - [AnimatedWidget](#animatedwidget)
+      - [PageRouteBuilder](#pageroutebuilder)
 
 
 # Flutter精要
@@ -29,6 +50,65 @@ Dart语言具有以下特点：
 Flutter采用组件化的设计思想，将界面划分为多个组件，每个组件负责一个功能。
 无状态（StatelessWidget）与有状态（StatefulWidget）：前者用于静态内容，后者通过setState()实现动态更新，是构建UI的基础单元。
 通过嵌套Widget（如Row、Column、Stack）实现复杂布局，支持高度定制化。
+
+### Text
+显示文本内容，支持样式（字体、颜色、对齐等）。
+```dart
+Text('Hello, Flutter!', style: TextStyle(fontSize: 20, color: Colors.blue))
+```
+
+### Image
+加载本地或网络图片，支持调整尺寸和填充方式。
+
+```dart
+Image.network('https://example.com/image.png', fit: BoxFit.cover)
+```
+
+### Button
+- ElevatedButton（凸起按钮）
+- TextButton（文本按钮）
+- FloatingActionButton（悬浮按钮）
+- IconButton（图标按钮）
+
+### Container
+容器控件，用于包裹子组件并设置布局、装饰（背景色、圆角等）。
+```dart
+Container(
+  width: 100,
+  height: 100,
+  color: Colors.red,
+  child: Text('Container'),
+)
+```
+### Row & Column
+分别实现水平和垂直布局，支持对齐方式和间距控制。
+```dart
+Row(
+  children: [Container(width: 50, color: Colors.red), Container(width: 50, color: Colors.blue)],
+  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+)
+```
+
+### Stack
+叠加布局，允许子组件重叠，常用于实现复杂UI（如弹窗、图标叠加）。
+
+### TextField
+文本输入框，支持输入验证、提示文本等。
+
+### Checkbox & Radio
+复选框和单选框，用于多选或单选操作。
+
+### Switch & Slider
+开关控件和滑块控件，用于状态切换或数值选择。
+
+### Scaffold
+提供Material Design的基础结构，包含导航栏（AppBar）、侧边栏（Drawer）和底部导航栏（BottomNavigationBar）。
+
+### Card
+卡片控件，用于展示信息块，带阴影和圆角效果。
+
+### TabBar & TabBarView
+选项卡布局，实现多页面切换。
 
 ## 状态管理
 Flutter的状态管理是构建复杂应用的核心挑战之一，其方案需根据状态作用域、数据复杂度及团队协作需求选择。
@@ -154,3 +234,84 @@ class MyWidget extends ConsumerWidget {
 - 性能优化：使用const和final减少重建，结合ValueListenableBuilder或Consumer实现局部更新。
 - 测试支持：BLoC和Riverpod提供内置测试工具，确保逻辑可验证。
 - 通过合理选择方案，开发者可构建高效、可维护的Flutter应用，平衡开发效率与代码质量。
+
+## 动画
+在 Flutter 中，动画组件体系庞大且灵活，主要分为核心动画控制器、曲线与插值类、隐式动画组件和显示动画组件四大类。
+
+### AnimationController
+驱动动画的核心类，控制动画的开始、停止、方向（正向/反向）和时长。
+- 关键参数：
+  - duration（动画时长）
+  - vsync（防抖参数，通常为 SingleTickerProviderStateMixin 的混入类）。
+```dart
+AnimationController controller = AnimationController(
+  duration: Duration(seconds: 2),
+  vsync: this,
+);
+```
+
+### CurvedAnimation
+定义动画曲线（如加速、减速），使动画更符合自然运动规律。
+- 常用曲线：
+  - Curves.linear（匀速）
+  - Curves.ease（先加速后减速）
+  - Curves.bounceOut（反弹效果）
+
+```dart
+CurvedAnimation curve = CurvedAnimation(parent: controller, curve: Curves.easeOut);
+```
+
+### Tween
+将动画值（0.0～1.0）映射到具体范围（如尺寸、颜色），支持数值、颜色、边距等类型。
+```dart
+Tween(begin: 100.0, end: 300.0).animate;
+ColorTween(begin: Colors.red, end: Colors.blue).animate;
+```
+
+### 隐式动画
+隐式组件自动管理动画控制器和监听，开发者只需配置起始和结束值，适合简单场景。
+```dart
+AnimatedContainer(
+  duration: Duration(seconds: 1),
+  width: expanded ? 200 : 100,
+  color: expanded ? Colors.blue : Colors.red,
+)
+
+AnimatedOpacity(
+  duration: Duration(seconds: 1),
+  opacity: visible? 1.0 : 0.0,
+  child: Text('Hello, Flutter!'), 
+)
+```
+其他隐式组件还包括：AnimatedAlign、 AnimatedPadding、 AnimatedPhysicalModel、 AnimatedTheme等。
+
+### 显式动画
+需结合 AnimationController 和 Listener手动控制，适合复杂动画逻辑。
+
+#### AnimatedBuilder
+监听动画值变化，动态构建 UI。
+```dart
+AnimatedBuilder(
+  animation: curve,
+  builder: (context, child) => Container(width: 100 + 200 * curve.value),
+)
+```
+
+#### AnimatedWidget
+抽象类，用于封装需监听动画的组件（如 FadeTransition、ScaleTransition）。
+
+- FadeTransition：透明度过渡。
+- SlideTransition：平移动画。
+- RotationTransition：旋转动画。
+
+#### PageRouteBuilder
+自定义页面路由，支持动画效果（如缩放、滑动）。
+```dart
+Navigator.push(
+  context,
+  PageRouteBuilder(
+    pageBuilder: (context, animation, secondary) => MyPage(),
+    transitionsBuilder: (context, animation, secondary, child) => ScaleTransition(scale: curve, child: child),
+  ),
+);
+```
