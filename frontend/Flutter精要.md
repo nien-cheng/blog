@@ -374,3 +374,5 @@ Skia 是一个开源的 2D 图形库，支持文本、路径、位图、图形�
   - CPU 渲染：通过内存操作（如 SkBitmapDevice）直接写入像素数据，适用于低端设备或简单场景。
   - GPU 渲染：通过 OpenGL、Vulkan 或 Metal 等底层接口加速，支持复杂图形与高帧率需求。
 - 封装适配层：屏蔽不同平台的图形 API 差异，例如通过 GrGLOpsRenderPass 适配 OpenGL。
+
+![architecture](https://docs.flutter.cn/assets/images/docs/arch-overview/archdiagram.png)
