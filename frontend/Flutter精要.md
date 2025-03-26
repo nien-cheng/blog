@@ -29,6 +29,10 @@
       - [AnimatedBuilder](#animatedbuilder)
       - [AnimatedWidget](#animatedwidget)
       - [PageRouteBuilder](#pageroutebuilder)
+  - [渲染](#渲染)
+    - [数据结构（三棵树）](#数据结构三棵树)
+    - [渲染阶段](#渲染阶段)
+    - [性能优化](#性能优化)
 
 
 # Flutter精要
@@ -315,3 +319,44 @@ Navigator.push(
   ),
 );
 ```
+
+## 渲染
+Flutter 通过 Skia 引擎直接渲染到屏幕，不依赖原生控件，解决了混合开发框架（如 React Native）的多端一致性问题，同时保持高性能。
+Flutter 的渲染流程分为多个阶段，主要在 UI 线程（Dart）和 GPU 线程（原生引擎）协作完成。
+
+### 数据结构（三棵树）
+1. Widget 树
+开发者编写的 UI 描述，不可变且轻量级，通过 setState 触发重建。
+1. Element 树
+Widget 的实例化对象，管理生命周期，协调 Widget 与 RenderObject 的映射。
+1. RenderObject 树
+实际参与布局和绘制的节点，定义尺寸计算（layout）和绘制逻辑（paint）。
+
+### 渲染阶段
+1. 构建阶段（Build Phase）
+- 开发者通过 Widget 树描述界面，Flutter 通过 Widget.createElement() 生成 Element 树，管理组件生命周期。
+W- idget 是不可变的配置描述，Element 是其实例化对象，负责协调 Widget 与 RenderObject 的关联。
+- 优化建议：避免在 build 方法中执行副作用操作，减少嵌套层级以降低遍历节点数量。
+1. 布局阶段（Layout Phase）
+- RenderObject 树根据父节点约束计算尺寸和位置，形成最终的布局结构。
+- 关键机制：
+  - Relayout Boundary：通过 RepaintBoundary 等控件划分布局边界，避免父级布局变化影响子级。
+  - 尺寸预定义：如 ListView 指定 itemExtent 可减少动态计算开销。
+1. 绘制阶段（Paint Phase）
+- RenderObject 将布局结果转换为绘制指令，生成 Layer 树，记录绘制操作（如颜色、路径等）。
+- Layer 树特性：
+  - 每个 Layer 对应特定区域的绘制内容，通过 isRepaintBoundary 标记决定是否局部重绘。
+  - RepaintBoundary 用于隔离页面路由或动画区域，减少全局重绘。
+1. 光栅化与合成（GPU 线程）
+   - Layer 树提交到 Flutter Engine，通过 Skia 渲染引擎进行光栅化（将矢量指令转换为像素），最终合成到屏幕上。
+
+### 性能优化
+1. 减少构建与布局开销
+   - 使用 const 或 @ immutable 修饰静态 Widget，避免重复创建。
+   - 拆分频繁更新的 Widget，使用 StatefulBuilder 局部更新。
+2. 高效渲染策略
+   - 列表优化：ListView.builder 按需构建可见项，避免一次性渲染全部数据。
+   - 避免过度绘制：通过 RepaintBoundary 隔离动画区域，或使用 CustomPaint 直接控制绘制范围。
+3. 线程与资源管理
+   - Isolate 多线程：处理 CPU 密集型任务（如图片压缩），避免阻塞 UI 线程。
+   - GPU 加速：利用 Skia 引擎的硬件加速特性，减少光栅化耗时。
