@@ -33,8 +33,9 @@
     - [数据结构（三棵树）](#数据结构三棵树)
     - [渲染阶段](#渲染阶段)
     - [性能优化](#性能优化)
-  - [Sika引擎](#sika引擎)
+    - [Sika引擎](#sika引擎)
     - [分层架构](#分层架构)
+  - [网络](#网络)
 
 
 # Flutter精要
@@ -336,21 +337,21 @@ Widget 的实例化对象，管理生命周期，协调 Widget 与 RenderObject 
 
 ### 渲染阶段
 1. 构建阶段（Build Phase）
-- 开发者通过 Widget 树描述界面，Flutter 通过 Widget.createElement() 生成 Element 树，管理组件生命周期。
-W- idget 是不可变的配置描述，Element 是其实例化对象，负责协调 Widget 与 RenderObject 的关联。
-- 优化建议：避免在 build 方法中执行副作用操作，减少嵌套层级以降低遍历节点数量。
-1. 布局阶段（Layout Phase）
-- RenderObject 树根据父节点约束计算尺寸和位置，形成最终的布局结构。
-- 关键机制：
-  - Relayout Boundary：通过 RepaintBoundary 等控件划分布局边界，避免父级布局变化影响子级。
-  - 尺寸预定义：如 ListView 指定 itemExtent 可减少动态计算开销。
-1. 绘制阶段（Paint Phase）
-- RenderObject 将布局结果转换为绘制指令，生成 Layer 树，记录绘制操作（如颜色、路径等）。
-- Layer 树特性：
-  - 每个 Layer 对应特定区域的绘制内容，通过 isRepaintBoundary 标记决定是否局部重绘。
-  - RepaintBoundary 用于隔离页面路由或动画区域，减少全局重绘。
-1. 光栅化与合成（GPU 线程）
-   - Layer 树提交到 Flutter Engine，通过 Skia 渲染引擎进行光栅化（将矢量指令转换为像素），最终合成到屏幕上。
+   - 开发者通过 Widget 树描述界面，Flutter 通过 Widget.createElement() 生成 Element 树，管理组件生命周期。
+   W- idget 是不可变的配置描述，Element 是其实例化对象，负责协调 Widget 与 RenderObject 的关联。
+   - 优化建议：避免在 build 方法中执行副作用操作，减少嵌套层级以降低遍历节点数量。
+2. 布局阶段（Layout Phase）
+   - RenderObject 树根据父节点约束计算尺寸和位置，形成最终的布局结构。
+   - 关键机制：
+     - Relayout Boundary：通过 RepaintBoundary 等控件划分布局边界，避免父级布局变化影响子级。
+     - 尺寸预定义：如 ListView 指定 itemExtent 可减少动态计算开销。
+3. 绘制阶段（Paint Phase）
+   - RenderObject 将布局结果转换为绘制指令，生成 Layer 树，记录绘制操作（如颜色、路径等）。
+   - Layer 树特性：
+     - 每个 Layer 对应特定区域的绘制内容，通过 isRepaintBoundary 标记决定是否局部重绘。
+     - RepaintBoundary 用于隔离页面路由或动画区域，减少全局重绘。
+4. 光栅化与合成（GPU 线程）
+    - Layer 树提交到 Flutter Engine，通过 Skia 渲染引擎进行光栅化（将矢量指令转换为像素），最终合成到屏幕上。
 
 ### 性能优化
 1. 减少构建与布局开销
@@ -363,7 +364,7 @@ W- idget 是不可变的配置描述，Element 是其实例化对象，负责协
    - Isolate 多线程：处理 CPU 密集型任务（如图片压缩），避免阻塞 UI 线程。
    - GPU 加速：利用 Skia 引擎的硬件加速特性，减少光栅化耗时。
 
-## Sika引擎
+### Sika引擎
 Flutter 的渲染引擎基于 Skia 图形引擎，采用 GPU 加速渲染，提供高性能的 UI 绘制能力。
 Skia 是一个开源的 2D 图形库，支持文本、路径、位图、图形效果等绘制功能。
 其跨平台特性使 Flutter 能在不同操作系统（如 Android、iOS）上生成一致的渲染结果，无需依赖原生 UI 控件。
@@ -376,3 +377,5 @@ Skia 是一个开源的 2D 图形库，支持文本、路径、位图、图形�
 - 封装适配层：屏蔽不同平台的图形 API 差异，例如通过 GrGLOpsRenderPass 适配 OpenGL。
 
 ![architecture](https://docs.flutter.cn/assets/images/docs/arch-overview/archdiagram.png)
+
+## 网络
