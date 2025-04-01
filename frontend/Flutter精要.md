@@ -35,7 +35,8 @@
     - [性能优化](#性能优化)
     - [Sika引擎](#sika引擎)
     - [分层架构](#分层架构)
-  - [网络](#网络)
+  - [多线程](#多线程)
+    - [async/await](#asyncawait)
 
 
 # Flutter精要
@@ -378,4 +379,11 @@ Skia 是一个开源的 2D 图形库，支持文本、路径、位图、图形�
 
 ![architecture](https://docs.flutter.cn/assets/images/docs/arch-overview/archdiagram.png)
 
-## 网络
+## 多线程
+
+### async/await
+在 Flutter 中，使用 Future 和 async/await 并不是多线程机制，而是基于单线程模型的非阻塞异步编程。
+
+- 单线程核心：Dart 采用单线程模型（UI Isolate），所有代码（包括 Future 和 async/await）默认在主线程执行。
+- Future 的非阻塞特性：Future 将异步操作（如网络请求、文件读写）封装为“延迟任务”，通过事件循环（Event Loop）在主线程中按顺序执行，而非创建新线程。这与 JavaScript 的 Promise 类似。
+- 验证示例：通过打印 Isolate 信息可发现，即使使用 Future，异步操作仍在主线程执行，与 iOS/Android 的多线程模型不同。
