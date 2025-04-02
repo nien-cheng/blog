@@ -31,3 +31,134 @@ ECMAScript 是该语言的官方名称。
 - ECMAScript 2021（ES12） ：新增了 String.prototype.replaceAll 、 Promise.any 、逻辑赋值运算符（ &&= 、 ||= 、 ??= ）等特性。
 - ECMAScript 2022（ES13） ：引入了类的私有方法、静态块、 Object.hasOwn 等特性。
 - ECMAScript 2023（ES14） ：对数组方法进行了增强，如 Array.prototype.toReversed 、 Array.prototype.toSorted 等，以及 Map 和 Set 的复制方法。
+
+## Promise
+Promise 是 JavaScript 中处理异步操作的一种机制，它避免了回调地狱，让异步代码更易读和维护。以下是 Promise 的核心要点：
+###  基本概念
+Promise 是一个对象，代表一个异步操作的最终完成或失败，并返回其结果。它有三种状态：
+
+- pending（进行中） ：初始状态，既不是成功，也不是失败状态。
+- fulfilled（已成功） ：意味着操作成功完成。
+- rejected（已失败） ：意味着操作失败。
+
+### 创建 Promise
+可以使用 Promise 构造函数来创建一个新的 Promise 对象，构造函数接收一个执行器函数，该函数有两个参数： resolve 和 reject 。
+
+```javascript
+const myPromise = new Promise((resolve, reject) => {
+    // 模拟异步操作
+    setTimeout(() => {
+        const success = true;
+        if (success) {
+            resolve('操作成功');
+        } else {
+            reject('操作失败');
+        }
+    }, 1000);
+});
+ ```
+
+### 链式调用
+Promise 支持链式调用，通过 then() 方法处理成功结果， catch() 方法处理失败结果。
+
+```javascript
+myPromise
+  .then(result => {
+        console.log(result); // 操作成功
+        return result + ' 继续处理';
+    })
+  .then(newResult => {
+        console.log(newResult); // 操作成功 继续处理
+    })
+  .catch(error => {
+        console.error(error);
+    });
+ ```
+
+ ### 静态方法
+- Promise.all() ：接收一个 Promise 数组，只有当所有 Promise 都成功时，返回的 Promise 才会成功；只要有一个失败，就会立即返回失败的 Promise 。
+```javascript
+const promise1 = Promise.resolve(1);
+const promise2 = Promise.resolve(2);
+const promise3 = Promise.resolve(3);
+
+Promise.all([promise1, promise2, promise3])
+  .then(results => {
+        console.log(results); // [1, 2, 3]
+    })
+  .catch(error => {
+        console.error(error);
+    });
+ ```
+
+- Promise.race() ：接收一个 Promise 数组，哪个 Promise 最先完成（无论成功还是失败），就返回哪个 Promise 的结果。
+```javascript
+const promise4 = new Promise((resolve) => setTimeout(() => resolve('第一个完成'), 1000));
+const promise5 = new Promise((resolve) => setTimeout(() => resolve('第二个完成'), 2000));
+
+Promise.race([promise4, promise5])
+  .then(result => {
+        console.log(result); // 第一个完成
+    })
+  .catch(error => {
+        console.error(error);
+    });
+```
+
+- Promise.allSettled() ：接收一个 Promise 数组，返回一个新的 Promise ，当所有输入的 Promise 都已敲定（即已成功或已失败）时，新的 Promise 才会完成，并返回一个包含每个 Promise 结果的数组。
+```javascript
+const promise6 = Promise.resolve(1);
+const promise7 = Promise.reject('出错了');
+
+Promise.allSettled([promise6, promise7])
+  .then(results => {
+        console.log(results);
+        // [
+        //   { status: 'fulfilled', value: 1 },
+        //   { status: 'rejected', reason: '出错了' }
+        // ]
+    });
+ ```
+
+- Promise.any() ：接收一个 Promise 数组，只要有一个 Promise 成功，就返回该 Promise 的结果；如果所有 Promise 都失败，则返回一个失败的 Promise ，并包含所有失败的原因。
+
+### finally() 方法
+无论 Promise 最终状态如何， finally() 方法都会执行。
+
+```javascript
+myPromise
+  .then(result => {
+        console.log(result);
+    })
+  .catch(error => {
+        console.error(error);
+    })
+  .finally(() => {
+        console.log('操作结束');
+    });
+```
+
+### 6. 与 async/await 结合使用
+async/await 是基于 Promise 构建的语法糖，让异步代码看起来更像同步代码。
+
+```javascript
+async function getData() {
+    try {
+        const result = await myPromise;
+        console.log(result);
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+getData();
+ ```
+
+掌握以上这些要点，你就能在 JavaScript 中熟练运用 Promise 处理异步操作了。
+
+## Generator
+
+## async/await
+
+## 类和继承
+
