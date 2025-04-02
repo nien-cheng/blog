@@ -270,6 +270,68 @@ async function* asyncGenerator() {
 掌握以上这些要点，你就能在 JavaScript 中熟练运用 Generator 处理复杂的异步和同步操作了。
 
 ## async/await
+async/await 是 JavaScript 中用于处理异步操作的强大语法糖，它基于 Promise 构建，让异步代码的编写和阅读更像同步代码。以下是 async/await 的核心要点：
+
+### 基本概念
+- async 函数 ：在函数声明前加上 async 关键字，该函数会始终返回一个 Promise 对象。如果函数内部返回的是一个值，这个值会被自动包装在一个已解决的 Promise 中；如果函数内部抛出异常， Promise 会被拒绝。
+- await 关键字 ：只能在 async 函数内部使用，它会暂停 async 函数的执行，直到所等待的 Promise 被解决（ fulfilled ）或被拒绝（ rejected ），然后返回 Promise 的结果。
+
+### 顺序执行异步操作
+- 使用 async/await 可以很方便地按顺序执行多个异步操作，代码看起来就像同步代码一样。
+```javascript
+function firstAsync() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve('第一个操作完成');
+        }, 1000);
+    });
+}
+
+function secondAsync() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve('第二个操作完成');
+        }, 1000);
+    });
+}
+
+async function sequentialAsync() {
+    const result1 = await firstAsync();
+    console.log(result1);
+    const result2 = await secondAsync();
+    console.log(result2);
+}
+
+sequentialAsync();
+ ```
+
+ ### 并行执行异步操作
+- 如果多个异步操作之间没有依赖关系，可以使用 Promise.all 结合 async/await 来并行执行它们。
+```javascript
+function asyncTask1() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve('任务 1 完成');
+        }, 1000);
+    });
+}
+
+function asyncTask2() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve('任务 2 完成');
+        }, 1000);
+    });
+}
+
+async function parallelAsync() {
+    const [result1, result2] = await Promise.all([asyncTask1(), asyncTask2()]);
+    console.log(result1);
+    console.log(result2);
+}
+
+parallelAsync();
+ ```
 
 ## 类和继承
 
