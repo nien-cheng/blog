@@ -333,5 +333,91 @@ async function parallelAsync() {
 parallelAsync();
  ```
 
-## 类和继承
+## 模块化
+模块化编程将程序拆分成多个小的、独立的模块，每个模块负责特定的功能。模块之间通过定义清晰的接口进行交互，这样可以避免全局变量污染，提高代码的可维护性和可复用性
 
+### 早期的模块化方式
+- 全局函数模式 ：将不同功能封装成全局函数，在不同的文件中调用这些函数。但这种方式容易造成全局变量污染，且难以管理依赖关系。
+```javascript
+// module1.js
+function add(a, b) {
+    return a + b;
+}
+
+// main.js
+// 直接调用全局函数
+const result = add(1, 2);
+ ```
+
+- 对象封装模式 ：将相关的函数和变量封装在一个对象中，减少全局变量的数量。
+```javascript
+// module1.js
+const mathModule = {
+    add: function(a, b) {
+        return a + b;
+    },
+    subtract: function(a, b) {
+        return a - b;
+    }
+};
+
+// main.js
+const result = mathModule.add(1, 2);
+ ```
+### 现代模块化规范
+- CommonJS ：主要用于服务器端的 Node.js 环境。每个文件就是一个模块，通过 exports 或 module.exports 导出模块内容，使用 require 函数引入模块。
+```javascript
+// math.js
+exports.add = function(a, b) {
+    return a + b;
+};
+
+// main.js
+const math = require('./math');
+const result = math.add(1, 2);
+ ```
+
+- AMD（Asynchronous Module Definition） ：用于浏览器环境，支持异步加载模块，代表库是 RequireJS。
+```javascript
+// math.js
+define(function() {
+    return {
+        add: function(a, b) {
+            return a + b;
+        }
+    };
+});
+
+// main.js
+require(['math'], function(math) {
+    const result = math.add(1, 2);
+});
+ ```
+
+- CMD（Common Module Definition） ：也是用于浏览器环境，支持异步加载模块，代表库是 Sea.js。它的特点是就近依赖，即需要使用模块时再进行加载。
+```javascript
+// math.js
+define(function(require, exports, module) {
+    exports.add = function(a, b) {
+        return a + b;
+    };
+});
+
+// main.js
+define(function(require, exports, module) {
+    const math = require('./math');
+    const result = math.add(1, 2);
+});
+ ```
+
+- ES6 模块（ES Modules） ：是 JavaScript 官方的模块化标准，在浏览器和 Node.js 环境中都得到了支持。使用 export 关键字导出模块内容，使用 import 关键字引入模块。
+```javascript
+// math.js
+export function add(a, b) {
+    return a + b;
+}
+
+// main.js
+import { add } from './math.js';
+const result = add(1, 2);
+ ```
