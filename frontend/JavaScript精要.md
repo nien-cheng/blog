@@ -138,7 +138,7 @@ myPromise
     });
 ```
 
-### 6. 与 async/await 结合使用
+### 与 async/await 结合使用
 async/await 是基于 Promise 构建的语法糖，让异步代码看起来更像同步代码。
 
 ```javascript
@@ -157,6 +157,117 @@ getData();
 掌握以上这些要点，你就能在 JavaScript 中熟练运用 Promise 处理异步操作了。
 
 ## Generator
+Generator 是一种特殊的函数，通过在函数名前加 * 来定义。它可以使用 yield 关键字暂停函数的执行，并返回一个值。每次调用生成器的 next() 方法时，函数会从上次暂停的位置继续执行，直到遇到下一个 yield 或函数结束。
+
+```javascript
+// 定义一个 Generator 函数
+function* myGenerator() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+// 创建 Generator 对象
+const generator = myGenerator();
+
+// 使用 next() 方法获取 Generator 的值
+console.log(generator.next()); // { value: 1, done: false }
+console.log(generator.next()); // { value: 2, done: false }
+console.log(generator.next()); // { value: 3, done: false }
+console.log(generator.next()); // { value: undefined, done: true }
+```
+### yield 关键字
+yield 是 Generator 中的核心关键字，它用于暂停函数的执行，并返回一个值。每次调用 next() 方法时，函数会从上次 yield 的位置继续执行，直到遇到下一个 yield 或函数结束。
+
+### 传递参数给 next() 方法
+可以在调用 next() 方法时传递参数，这个参数会作为上一个 yield 表达式的返回值。
+
+```javascript
+function* generatorWithParams() {
+    const value1 = yield 1;
+    const value2 = yield value1 + 2;
+    yield value2 + 3;
+}
+
+const gen = generatorWithParams();
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.next(10)); // { value: 12, done: false }
+console.log(gen.next(20)); // { value: 23, done: false }
+console.log(gen.next()); // { value: undefined, done: true }
+ ```
+### return() 方法
+return() 方法用于提前结束 Generator 的执行，并返回指定的值。
+
+```javascript
+function* myGenerator() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+const gen = myGenerator();
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.return(100)); // { value: 100, done: true }
+console.log(gen.next()); // { value: undefined, done: true }
+ ```
+
+### throw() 方法
+throw() 方法用于在 Generator 内部抛出一个错误。
+
+```javascript
+function* myGenerator() {
+    try {
+        yield 1;
+    } catch (error) {
+        console.log('捕获到错误:', error);
+    }
+}
+
+const gen = myGenerator();
+console.log(gen.next()); // { value: 1, done: false }
+gen.throw(new Error('抛出错误')); // 捕获到错误: Error: 抛出错误
+ ```
+### 与迭代器的关系
+Generator 对象实现了迭代器协议，因此可以使用 for...of 循环来遍历 Generator 的值。
+
+```javascript
+function* myGenerator() {
+    yield 1;
+    yield 2;
+    yield 3;
+}
+
+for (const value of myGenerator()) {
+    console.log(value);
+}
+// 输出:
+// 1
+// 2
+// 3
+ ```
+
+ ### 异步 Generator
+异步 Generator 结合了 Generator 和异步操作的特性，允许你在 Generator 中使用 await 关键字。
+
+```javascript
+async function* asyncGenerator() {
+    yield await Promise.resolve(1);
+    yield await Promise.resolve(2);
+    yield await Promise.resolve(3);
+}
+
+(async () => {
+    for await (const value of asyncGenerator()) {
+        console.log(value);
+    }
+})();
+// 输出:
+// 1
+// 2
+// 3
+ ```
+
+掌握以上这些要点，你就能在 JavaScript 中熟练运用 Generator 处理复杂的异步和同步操作了。
 
 ## async/await
 
