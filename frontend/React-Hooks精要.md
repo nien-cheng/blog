@@ -38,7 +38,64 @@
 - useState的替代方案，适合复杂状态逻辑
 - 类似于Redux中的reducer模式
 - 示例：`const [state, dispatch] = useReducer(reducer, initialState)`
+- 适用场景：
+  - 状态更新逻辑复杂，涉及多个条件或步骤
+  - 新状态依赖于旧状态
+  - 需要集中管理状态更新逻辑
+  - 需要优化深层嵌套组件的性能
+  
 
+复杂状态逻辑通常指以下几种情况：
+
+1. 多个状态相互依赖 ：
+   
+   ```javascript
+   const initialState = { count: 0, step: 1 };
+   
+   function reducer(state, action) {
+     switch (action.type) {
+       case 'increment':
+         return { ...state, count: state.count + state.step };
+       case 'decrement':
+         return { ...state, count: state.count - state.step };
+       case 'setStep':
+         return { ...state, step: action.payload };
+       default:
+         throw new Error();
+     }
+   }
+    ```
+2. 状态更新涉及多个步骤 ：
+   
+   ```javascript
+   function reducer(state, action) {
+     switch (action.type) {
+       case 'fetchData':
+         return { ...state, loading: true };
+       case 'fetchDataSuccess':
+         return { ...state, loading: false, data: action.payload };
+       case 'fetchDataFailure':
+         return { ...state, loading: false, error: action.payload };
+       default:
+         throw new Error();
+     }
+   }
+    ```
+3. 状态更新需要条件判断 ：
+   
+   ```javascript
+   function reducer(state, action) {
+     switch (action.type) {
+       case 'toggle':
+         return { ...state, isOn: !state.isOn };
+       case 'reset':
+         return { ...state, isOn: action.payload === 'on' };
+       default:
+         throw new Error();
+     }
+   }
+    ```
+    
 ## 5. useRef
 - 用于创建可变的引用对象
 - 常用于访问DOM元素或存储可变值
