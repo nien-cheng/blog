@@ -105,11 +105,72 @@
 - 用于性能优化，缓存计算结果
 - 避免在每次渲染时都进行昂贵的计算
 - 示例：`const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b])`
+- 缓存机制：
+  - 首次渲染执行计算函数并缓存结果
+  - 依赖项变化时重新计算
+  - 依赖项不变时返回缓存值
+- 注意事项：
+  - 依赖项数组使用浅比较(Object.is)
+  - 不提供依赖数组会导致每次渲染都重新计算
+  - 计算函数应该是纯函数，不应有副作用
+
+```javascript
+const expensiveValue = useMemo(() => {
+  // 假设这是一个计算量很大的函数
+  let result = 0;
+  for (let i = 0; i < 1000000; i++) {
+    result += a * b;
+  }
+  return result;
+}, [a, b]); // 只有当a或b变化时才会重新计算
+```
 
 ## 7. useCallback
 - 用于缓存回调函数
 - 避免在每次渲染时都创建新的函数实例
 - 示例：`const memoizedCallback = useCallback(() => { doSomething(a, b); }, [a, b]);`
+- 使用场景：
+  - 将回调传递给子组件时避免不必要的重新渲染
+  - 函数作为其他Hook的依赖项时
+  - 函数内部依赖特定状态或props时
+- 注意事项：
+  - 过度使用可能反而降低性能
+  - 只在确实需要优化性能时使用
+```jsx
+const Child = React.memo(({ onClick }) => {
+  console.log('Child渲染');
+  return <button onClick={onClick}>点击</button>;
+});
+
+function Parent() {
+  const [count, setCount] = useState(0);
+  
+  // 使用useCallback缓存函数
+  const handleClick = useCallback(() => {
+    console.log('点击处理');
+  }, []); // 空依赖表示函数不会改变
+
+  return (
+    <>
+      <Child onClick={handleClick} />
+      <button onClick={() => setCount(c => c + 1)}>增加 {count}</button>
+    </>
+  );
+}
+```
+作为useEffect依赖项时：
+```jsx
+function Example({ id }) {
+  const fetchData = useCallback(async () => {
+    const data = await fetch(`/api/data/${id}`);
+    return data.json();
+  }, [id]); // 当id变化时才创建新函数
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]); // 安全地将函数作为依赖
+}
+```
 
 ## 8. useLayoutEffect
 - 与useEffect类似，但在DOM更新后同步执行
